@@ -1,2 +1,3 @@
 /api/node_module
 /api/dist
+/api/.env
