@@ -14,15 +14,22 @@ const registrar = async (req, res) => {
     }
 
     try {
-        const usuario = new Usuario(nombre, email, password);
-        usuario.token = generarId();
-        await usuario.save();
+        // Crear el objeto de datos para el nuevo usuario
+        const usuarioData = {
+            nombre,
+            email,
+            password,
+            token: generarId(),  // Generar un token para la confirmación de cuenta
+        };
 
-        // Enviar email de confirmación
-        emailRegistro({
-            email: usuario.email,
-            nombre: usuario.nombre,
-            token: usuario.token,
+        // Crear el usuario en la base de datos
+        await Usuario.create(usuarioData);
+
+        // Enviar el email de confirmación
+        await emailRegistro({
+            email: usuarioData.email,
+            nombre: usuarioData.nombre,
+            token: usuarioData.token, 
         });
 
         res.status(200).json({ msg: "Usuario registrado correctamente. Revisa tu email para confirmar tu cuenta." });
@@ -31,6 +38,7 @@ const registrar = async (req, res) => {
         res.status(500).json({ msg: "Error al registrar el usuario" });
     }
 };
+
 
 // Autenticar usuario
 const autenticar = async (req, res) => {

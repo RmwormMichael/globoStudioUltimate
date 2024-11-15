@@ -15,19 +15,24 @@ export const emailRegistro = async (datos) => {
 
     //Informacion del email
 
-    const inf = await transport.sendMail({
-        from: '"GloboStudio - Globos Artisticos" <cuentas@GloboStudio.com>',
-        to:    email,
-        subject: "GloboStudio . Comprueba tu cuenta",
-        text: "Comprueba tu cuenta en GloboStudio",
-        html: `
-            <p>Hola ${nombre} Comprueba tu cuenta en GloboStudio</p>
-            <p>Tu cuenta ya casi esta lista, solo debes comprobar en el siguiente enlace</p>
-            <a href="${process.env.FRONTEND_URL}/confirmar/${token}">Comprobar Cuenta</a>
-
-            <p>Si tu no create esta cuenta, puedes ignorar el mensaje</p>
-        `,
-    })
+    try {
+      const info = await transport.sendMail({
+          from: '"GloboStudio - Globos Artisticos" <cuentas@GloboStudio.com>',
+          to: email,
+          subject: "GloboStudio . Comprueba tu cuenta",
+          text: "Comprueba tu cuenta en GloboStudio",
+          html: `
+              <p>Hola ${nombre} Comprueba tu cuenta en GloboStudio</p>
+              <p>Tu cuenta ya casi esta lista, solo debes comprobar en el siguiente enlace</p>
+              <a href="${process.env.FRONTEND_URL}/confirmar/${token}">Comprobar Cuenta</a>
+              <p>Si tu no creaste esta cuenta, puedes ignorar el mensaje</p>
+          `,
+      });
+      console.log('Correo enviado:', info);
+   } catch (error) {
+      console.error('Error al enviar el correo:', error);
+   }
+   
 };
 
 export const emailOlvidePassword = async (datos) => {

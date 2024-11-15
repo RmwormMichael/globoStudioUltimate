@@ -24,7 +24,7 @@ router.post("/olvide-password", olvidePassword);
 //manera compacta para que si es post use nuevoPassword y si es get use comprobarToken
 router.route("/olvide-password/:token").get(comprobarToken).post(nuevoPassword);
 
-router.get("/perfil", checkAuth, perfil);
+router.get("/perfil", checkAuth, perfil); 
 
 //TODO rutas admin
 

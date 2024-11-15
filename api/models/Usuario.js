@@ -39,21 +39,34 @@ class Usuario {
         });
     }
 
+    static async hashPassword(password) {
+        const salt = await bcrypt.genSalt(10);  // Generar el salt
+        const hashedPassword = await bcrypt.hash(password, salt);  // Encriptar la contraseña
+        return hashedPassword;
+    }
+
     // Crear un nuevo usuario
     static async create(data) {
         const connection = await conectarDB();  // Obtener la conexión desde la función
-        return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO usuarios SET ?', data, (error, results) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);  // Retorna el ID del nuevo usuario insertado
-                }
-            });
+        return new Promise(async (resolve, reject) => {
+            try {
+                // Encriptar la contraseña antes de guardarla
+                data.password = await Usuario.hashPassword(data.password);
+                connection.query('INSERT INTO usuarios SET ?', data, (error, results) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);  // Retorna el ID del nuevo usuario insertado
+                    }
+                });
+            } catch (err) {
+                reject(err);
+            }
         }).finally(() => {
             connection.end();  // Cierra la conexión después de la consulta
         });
     }
+
 
     // Actualizar un usuario por su ID
     static async update(id, data) {
@@ -148,6 +161,9 @@ class Usuario {
             connection.end();  // Cierra la conexión después de la consulta
         });
     }
+
+
+    
 
 
 }
